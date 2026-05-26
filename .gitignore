@@ -1,5 +1,13 @@
 ```
-# Python
+# Database files
+*.db
+
+# Environment files
+.env
+.env.local
+*.env.*
+
+# Dependencies
 __pycache__/
 *.pyc
 *.pyo
@@ -8,38 +16,35 @@ __pycache__/
 env/
 venv/
 .venv/
+.venv.bak/
 pip-log.txt
 pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
+
+# Build artifacts
+build/
+dist/
+*.egg
+*.egg-info/
+*.so
+*.dylib
+*.dll
+
+# Logs
 *.log
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Database
-*.db
-*.db-journal
-
-# Environment
-.env
-.env.local
-*.env
-
-# Frontend
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# IDE
+# Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
-*.tmp
+*~
 ```
