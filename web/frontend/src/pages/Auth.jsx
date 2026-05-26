@@ -24,7 +24,21 @@ export default function Auth() {
       if (isLogin) {
         // Вход
         const response = await authAPI.login(phone, password);
-        localStorage.setItem('userId', response.data.user_id.toString());
+        const userId = response.data.user_id;
+        localStorage.setItem('userId', userId.toString());
+        
+        // Проверяем, является ли пользователь админом
+        try {
+          const profileResponse = await authAPI.checkAdmin(userId);
+          if (profileResponse.data.is_admin) {
+            localStorage.setItem('isAdmin', 'true');
+          } else {
+            localStorage.removeItem('isAdmin');
+          }
+        } catch (err) {
+          localStorage.removeItem('isAdmin');
+        }
+        
         navigate('/profile');
       } else {
         // Регистрация с данными профиля

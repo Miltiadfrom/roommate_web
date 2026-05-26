@@ -36,6 +36,9 @@ export const authAPI = {
   
   register: (phone, password) => 
     api.post('/auth/register', { phone, password }),
+  
+  checkAdmin: (userId) => 
+    api.get(`/admin/users/${userId}/check`),
 };
 
 export const profileAPI = {
