@@ -1,13 +1,9 @@
 import sqlite3
 from datetime import datetime, timedelta
-import hashlib
 import random
 
 # Настройки
 DB_PATH = "roommate.db"
-
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
 
 def create_tables():
     """Создает все необходимые таблицы в базе данных"""
@@ -117,12 +113,12 @@ def seed_database():
 
     # 1. Создаем пользователей (используем phone как логин)
     users_data = [
-        ("+79001112233", hash_password("123456"), "active"),  # alice
-        ("+79001112234", hash_password("123456"), "active"),  # bob
-        ("+79001112235", hash_password("123456"), "active"),  # charlie
-        ("+79001112236", hash_password("123456"), "active"),  # diana
-        ("+79001112237", hash_password("123456"), "active"),  # eve
-        ("+79001112238", hash_password("123456"), "active"),  # frank
+        ("+79001112233", "123456", "active"),  # alice
+        ("+79001112234", "123456", "active"),  # bob
+        ("+79001112235", "123456", "active"),  # charlie
+        ("+79001112236", "123456", "active"),  # diana
+        ("+79001112237", "123456", "active"),  # eve
+        ("+79001112238", "123456", "active"),  # frank
     ]
 
     user_ids = {}

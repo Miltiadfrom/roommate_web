@@ -168,12 +168,10 @@ class Database:
                 cursor = conn.cursor()
                 cursor.execute('SELECT id FROM users WHERE phone = ?', (ADMIN_PHONE,))
                 if not cursor.fetchone():
-                    import hashlib
-                    password_hash = hashlib.sha256(ADMIN_PASSWORD.encode()).hexdigest()
                     cursor.execute('''
                         INSERT INTO users (phone, password_hash, created_at, is_admin)
                         VALUES (?, ?, ?, 1)
-                    ''', (ADMIN_PHONE, password_hash, datetime.now().isoformat()))
+                    ''', (ADMIN_PHONE, ADMIN_PASSWORD, datetime.now().isoformat()))
                     conn.commit()
                     print("Администратор создан: login=admin, password=admin123")
         except Exception as e:
@@ -202,11 +200,10 @@ class Database:
         try:
             with self.get_connection() as conn:
                 cursor = conn.cursor()
-                password_hash = self._hash_password(password)
                 cursor.execute('''
                     INSERT INTO users (phone, password_hash, created_at, is_admin)
                     VALUES (?, ?, ?, ?)
-                ''', (phone, password_hash, datetime.now().isoformat(), 1 if is_admin else 0))
+                ''', (phone, password, datetime.now().isoformat(), 1 if is_admin else 0))
                 self._log_action(cursor.lastrowid, 'register', 'New user registered')
                 return cursor.lastrowid
         except sqlite3.IntegrityError:
@@ -218,8 +215,7 @@ class Database:
             cursor = conn.cursor()
             cursor.execute('SELECT * FROM users WHERE phone = ? AND is_active = 1', (phone,))
             row = cursor.fetchone()
-            password_hash = self._hash_password(password)
-            if row and row['password_hash'] == password_hash:
+            if row and row['password_hash'] == password:
                 self._log_action(row['id'], 'login', 'User logged in')
                 return User(
                     id=row['id'],

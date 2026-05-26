@@ -4,10 +4,17 @@ import Profile from './pages/Profile';
 import Swipe from './pages/Swipe';
 import Messages from './pages/Messages';
 import Matches from './pages/Matches';
+import Admin from './pages/Admin';
 
 function PrivateRoute({ children }) {
-  const token = localStorage.getItem('token');
-  return token ? children : <Navigate to="/login" />;
+  const userId = localStorage.getItem('userId');
+  return userId ? children : <Navigate to="/login" />;
+}
+
+function AdminRoute({ children }) {
+  const userId = localStorage.getItem('userId');
+  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  return userId && isAdmin ? children : <Navigate to="/profile" />;
 }
 
 function App() {
@@ -45,6 +52,14 @@ function App() {
             <PrivateRoute>
               <Matches />
             </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/admin" 
+          element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
           } 
         />
         <Route path="/" element={<Navigate to="/profile" />} />

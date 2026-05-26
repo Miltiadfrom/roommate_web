@@ -272,6 +272,22 @@ async def get_compatibility(
 
 
 # === Admin endpoints ===
+@app.get("/api/admin/users/{user_id}/check")
+async def check_user_admin(
+    user_id: int,
+    current_user: User = Depends(get_current_user)
+):
+    """Проверка прав администратора"""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    user = db.get_user(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"is_admin": user.is_admin}
+
+
 @app.get("/api/admin/statistics")
 async def get_statistics(current_user: User = Depends(get_current_user)):
     """Получение статистики (только для админа)"""

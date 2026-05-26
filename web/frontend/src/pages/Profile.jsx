@@ -88,10 +88,16 @@ export default function Profile() {
           <button onClick={() => navigate('/swipe')}>Поиск</button>
           <button onClick={() => navigate('/messages')}>Сообщения</button>
           <button onClick={() => navigate('/matches')}>Матчи</button>
+          {localStorage.getItem('isAdmin') === 'true' && (
+            <button onClick={() => navigate('/admin')} style={{background: '#dc3545', color: 'white'}}>
+              Админка
+            </button>
+          )}
           <button 
             onClick={() => {
               localStorage.removeItem('token');
               localStorage.removeItem('userId');
+              localStorage.removeItem('isAdmin');
               navigate('/login');
             }}
             style={{ background: 'none', border: '1px solid #ddd', color: '#666', cursor: 'pointer' }}
