@@ -25,21 +25,21 @@ export default function Auth() {
         // Вход
         const response = await authAPI.login(phone, password);
         const userId = response.data.user_id;
-        localStorage.setItem('userId', userId.toString());
+        const isAdmin = response.data.is_admin;
         
-        // Проверяем, является ли пользователь админом
-        try {
-          const profileResponse = await authAPI.checkAdmin(userId);
-          if (profileResponse.data.is_admin) {
-            localStorage.setItem('isAdmin', 'true');
-          } else {
-            localStorage.removeItem('isAdmin');
-          }
-        } catch (err) {
+        localStorage.setItem('userId', userId.toString());
+        if (isAdmin) {
+          localStorage.setItem('isAdmin', 'true');
+        } else {
           localStorage.removeItem('isAdmin');
         }
         
-        navigate('/profile');
+        // Перенаправляем админа в админку, обычного пользователя в профиль
+        if (isAdmin) {
+          navigate('/admin');
+        } else {
+          navigate('/profile');
+        }
       } else {
         // Регистрация с данными профиля
         const registerResponse = await authAPI.register(phone, password);

@@ -107,7 +107,7 @@ async def login(data: UserLogin):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    return {"user_id": user.id}
+    return {"user_id": user.id, "is_admin": user.is_admin}
 
 
 # === Profile endpoints ===
