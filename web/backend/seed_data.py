@@ -1,12 +1,18 @@
 import sqlite3
 from datetime import datetime, timedelta
 import random
+import os
 
 # Настройки
 DB_PATH = "roommate.db"
 
 def create_tables():
     """Создает все необходимые таблицы в базе данных"""
+    # Удаляем старую базу данных для чистого старта
+    if os.path.exists(DB_PATH):
+        os.remove(DB_PATH)
+        print(f"Старая база данных {DB_PATH} удалена.")
+    
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
@@ -98,21 +104,16 @@ def create_tables():
     print("Таблицы созданы.")
 
 def seed_database():
-    # Сначала создаем все таблицы, если их нет
+    # Сначала создаем все таблицы (это удалит старую БД и создаст новую)
     create_tables()
     
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Очистка существующих данных (опционально, можно закомментировать если нужно сохранять данные)
-    # cursor.execute("DELETE FROM messages")
-    # cursor.execute("DELETE FROM swipes")
-    # cursor.execute("DELETE FROM matches")
-    # cursor.execute("DELETE FROM profiles")
-    # cursor.execute("DELETE FROM users")
-
     # 1. Создаем пользователей (используем phone как логин)
+    # Пароли хранятся в открытом виде (тестовый стенд)
     users_data = [
+        ("admin", "admin123", "active"),      # admin
         ("+79001112233", "123456", "active"),  # alice
         ("+79001112234", "123456", "active"),  # bob
         ("+79001112235", "123456", "active"),  # charlie
@@ -122,13 +123,14 @@ def seed_database():
     ]
 
     user_ids = {}
-    user_phones = ["+79001112233", "+79001112234", "+79001112235", "+79001112236", "+79001112237", "+79001112238"]
-    usernames = ["alice", "bob", "charlie", "diana", "eve", "frank"]
+    user_phones = ["admin", "+79001112233", "+79001112234", "+79001112235", "+79001112236", "+79001112237", "+79001112238"]
+    usernames = ["admin", "alice", "bob", "charlie", "diana", "eve", "frank"]
     
-    for i, (phone, pwd_hash, status) in enumerate(users_data):
+    for i, (phone, password, status) in enumerate(users_data):
+        is_admin = 1 if phone == "admin" else 0
         cursor.execute(
-            "INSERT INTO users (phone, password_hash, created_at, is_active) VALUES (?, ?, ?, ?)",
-            (phone, pwd_hash, datetime.now().isoformat(), 1 if status == "active" else 0)
+            "INSERT INTO users (phone, password_hash, created_at, is_active, is_admin) VALUES (?, ?, ?, ?, ?)",
+            (phone, password, datetime.now().isoformat(), 1 if status == "active" else 0, is_admin)
         )
         user_ids[usernames[i]] = cursor.lastrowid
 
@@ -218,9 +220,16 @@ def seed_database():
     conn.commit()
     conn.close()
     print("\n✅ База данных успешно наполнена тестовыми данными!")
-    print("\nЛогин для теста: alice / 123456")
-    print("У вас есть 2 мэтча: с Boris и Eva.")
-    print("В чате с Boris есть переписка.")
+    print("\n=== ТЕСТОВЫЕ УЧЕТНЫЕ ДАННЫЕ ===")
+    print("Администратор: login=admin, password=admin123")
+    print("\nОбычные пользователи (пароль 123456 для всех):")
+    print("  Алиса: +79001112233 (есть 2 мэтча, переписка с Борисом)")
+    print("  Борис: +79001112234")
+    print("  Чарли: +79001112235")
+    print("  Диана: +79001112236")
+    print("  Ева:   +79001112237")
+    print("  Франк: +79001112238")
+    print("\n⚠️  Пароли хранятся в открытом виде (тестовый стенд)")
 
 if __name__ == "__main__":
     seed_database()
